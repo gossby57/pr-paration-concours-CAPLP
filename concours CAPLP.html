@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fiche de suivi – Préparation intensive CAPLP Génie électrotechnique (24 semaines)</title>
+  <style>
+    :root {
+      --bg: #f7f7fb;
+      --card: #ffffff;
+      --ink: #1f2937;
+      --muted: #6b7280;
+      --primary: #2563eb;
+      --ring: #93c5fd;
+      --ok: #16a34a;
+      --warn: #b45309;
+      --border: #e5e7eb;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    header {
+      position: sticky; top: 0; z-index: 10; backdrop-filter: saturate(180%) blur(8px);
+      background: rgba(247,247,251,0.85); border-bottom: 1px solid var(--border);
+    }
+    .wrap { max-width: 1050px; margin: 0 auto; padding: 1rem 1rem; }
+    .title { font-size: clamp(1.2rem, 1.5vw + 1rem, 2rem); font-weight: 800; margin: 0.25rem 0; }
+    .subtitle { color: var(--muted); margin: 0.25rem 0 0.75rem; }
+    .toolbar { display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center; }
+    .btn {
+      padding: 0.55rem 0.8rem; border: 1px solid var(--border); background: var(--card);
+      border-radius: 10px; cursor: pointer; font-weight: 600; color: var(--ink);
+      box-shadow: 0 1px 0 rgba(17,24,39,0.04); transition: 120ms ease;
+    }
+    .btn:hover { border-color: var(--ring); box-shadow: 0 0 0 4px rgba(147,197,253,0.35); }
+    .btn.primary { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1rem; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 1rem; box-shadow: 0 1px 0 rgba(17,24,39,0.04); }
+    .card h3 { margin: 0 0 0.25rem; font-size: 1.05rem; }
+    .card .meta { color: var(--muted); font-size: 0.9rem; margin-bottom: 0.6rem; }
+    .tasks { list-style: none; padding: 0; margin: 0.25rem 0 0; display: grid; gap: 0.45rem; }
+    .task { display: grid; grid-template-columns: auto 1fr; gap: 0.5rem; align-items: start; }
+    .task label { line-height: 1.25; }
+    .task small { color: var(--muted); display: block; }
+    .badge { display: inline-block; border-radius: 999px; padding: 0.15rem 0.6rem; font-size: 0.78rem; font-weight: 700; border: 1px solid var(--border); background: #fafafc; }
+    .section { margin: 1.25rem 0 0.5rem; font-weight: 800; font-size: 0.95rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .links { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+    .links a { border: 1px solid var(--border); background: var(--card); border-radius: 999px; padding: 0.25rem 0.6rem; font-size: 0.85rem; }
+
+    /* Progress */
+    .progress { display: flex; align-items: center; gap: 0.6rem; margin: 0.5rem 0 0.25rem; }
+    .progress-bar { height: 8px; flex: 1; background: #e8eefc; border-radius: 6px; overflow: hidden; }
+    .progress-bar > i { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--primary), #60a5fa); }
+    .progress small { color: var(--muted); font-variant-numeric: tabular-nums; }
+
+    footer { margin: 2rem 0; color: var(--muted); font-size: 0.9rem; }
+
+    /* Print */
+    @media print {
+      header, .toolbar { display:none !important; }
+      .card { break-inside: avoid; }
+      body { background: #fff; }
+    }
+    /* Large checkbox for accessibility */
+    input[type="checkbox"] { inline-size: 1.05rem; block-size: 1.05rem; accent-color: var(--primary); margin-top: 0.1rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="title">Fiche de suivi – CAPLP Génie électrotechnique (24 semaines)</div>
+      <div class="subtitle">Prépa intensive (6 mois) · Option Électrique & Énergie · Sauvegarde automatique locale</div>
+      <div class="toolbar">
+        <button class="btn" id="toggleCollapse">Réduire / Déplier tout</button>
+        <button class="btn" id="resetChecks">Réinitialiser les coches</button>
+        <button class="btn primary" onclick="window.print()">Imprimer</button>
+        <span class="badge" id="statusBadge">Sauvegarde locale active</span>
+      </div>
+      <div class="progress">
+        <div class="progress-bar"><i id="progressFill"></i></div>
+        <small id="progressText">0 / 0 (0%)</small>
+      </div>
+      <div class="links" style="margin-top:0.4rem">
+        <a href="https://www.devenirenseignant.gouv.fr" target="_blank" rel="noopener">DevenirEnseignant.gouv.fr</a>
+        <a href="https://eduscol.education.fr" target="_blank" rel="noopener">Éduscol</a>
+        <a href="https://eduscol.education.fr/2392/referentiels-baccalaureat-professionnel" target="_blank" rel="noopener">Référentiels Bac Pro</a>
+        <a href="https://eduscol.education.fr/sti/" target="_blank" rel="noopener">Éduscol STI</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" id="weeks">
+    <!-- 24 week cards generated below -->
+  </main>
+
+  <footer class="wrap">
+    Astuce : les coches sont <strong>enregistrées automatiquement</strong> dans votre navigateur (localStorage). Le fichier ne transmet <em>aucune</em> donnée vers l'extérieur. Conservez ce fichier et ouvrez-le toujours dans le même navigateur pour retrouver votre progression.
+  </footer>
+
+  <script>
+    const STORAGE_PREFIX = 'caplp24w_';
+
+    // ---- Week data (concise, action-oriented) ----
+    const plan = [
+      // Mois 1
+      { w:'S1', title:'Cadrage & attentes du concours', items:[
+        ['Lire 2 rapports de jury récents (CAPLP Génie électrotechnique).','https://www.devenirenseignant.gouv.fr'],
+        ['Lister compétences & savoirs associés MELEC / CAP Électricien.','https://eduscol.education.fr'],
+        ['Mettre en place dossier de travail (fiches, sujets, planning).',''],
+      ]},
+      { w:'S2', title:'Fondamentaux électriques', items:[
+        ['Réviser Ohm / Kirchhoff / Puissances P-Q-S & facteur de puissance.',''],
+        ['Fiche Sécurité électrique – bases (consignation, EPI).',''],
+        ['Sujet écrit 1 – partie calculs (en 2h).','https://www.devenirenseignant.gouv.fr'],
+      ]},
+      { w:'S3', title:'Distribution BT/HTA & schémas de liaison à la terre', items:[
+        ['TT / TN / IT, protections (disjoncteurs, DDR, fusibles).',''],
+        ['Lecture & analyse de schémas (armoire simple).',''],
+        ['Sujet écrit 1 – partie analyse (2h).','https://www.devenirenseignant.gouv.fr'],
+      ]},
+      { w:'S4', title:'Triphasé, transformateurs, mesures', items:[
+        ['Triphasé (équilibré/déséquilibré), couplages étoile/triangle.',''],
+        ['Transformateurs : pertes, rendement, court-circuit.',''],
+        ['Sujet écrit 2 – petit dossier technique (2h).','https://www.devenirenseignant.gouv.fr'],
+      ]},
+
+      // Mois 2
+      { w:'S5', title:'Machines asynchrones – démarrage & protections', items:[
+        ['Caractéristiques MAS, couples, glissement.',''],
+        ['Démarrages (direct, étoile/triangle, soft-starter).',''],
+        ['Séquence pédagogique : Démarrage moteur (MELEC).','https://eduscol.education.fr/sti/'],
+      ]},
+      { w:'S6', title:'Variateurs & dimensionnement', items:[
+        ['Variateurs de vitesse : principes, IGBT, PWM.',''],
+        ['Dimensionnement câbles, protections, chute de tension.',''],
+        ['Sujet écrit 1 – machines (3h, temps réel).','https://www.devenirenseignant.gouv.fr'],
+      ]},
+      { w:'S7', title:'CC & synchrone – conversion d’énergie', items:[
+        ['Moteur CC : excitation, commande.',''],
+        ['Synchrone : principe, applications.',''],
+        ['Fiche pédagogie : objectifs-compétences-critères.',''],
+      ]},
+      { w:'S8', title:'Énergies renouvelables & consignation', items:[
+        ['PV, éolien, stockage : rendement & sécurité.',''],
+        ['Procédure de consignation & risques électriques.',''],
+        ['Séquence pédagogique : Sécurité & consignation.','https://eduscol.education.fr'],
+      ]},
+
+      // Mois 3
+      { w:'S9', title:'Automatisme – GRAFCET (bases)', items:[
+        ['Traduire un cahier des charges en GRAFCET.',''],
+        ['Câblage commande moteur (contacteurs, relais, BP).',''],
+        ['Mini-dossier : cycle simple + commentaires.',''],
+      ]},
+      { w:'S10', title:'API (ladder) & capteurs', items:[
+        ['Découverte Ladder / blocs de base (tempo, bascules).',''],
+        ['Capteurs / actionneurs – câblage & test.',''],
+        ['Sujet écrit 2 – automatisme (2h).','https://www.devenirenseignant.gouv.fr'],
+      ]},
+      { w:'S11', title:'Asservissement & sécurité machine', items:[
+        ['Boucles simples (vitesse/courant) – notions.',''],
+        ['Sécurité machine – arrêts d’urgence / interverrouillages.',''],
+        ['Séquence pédagogique : Commande automatique d’un moteur.','https://eduscol.education.fr/sti/'],
+      ]},
+      { w:'S12', title:'Analyse de système complet', items:[
+        ['Dossier technique (armoire + API + moteurs).',''],
+        ['Rédiger analyse structurée (fonctionnelle/technologique).',''],
+        ['Oralisation de 10 min (s’entraîner à voix haute).',''],
+      ]},
+
+      // Mois 4
+      { w:'S13', title:'Sujet complet – Écrit 1 (discipline)', items:[
+        ['Faire un sujet complet en 4h (conditions réelles).','https://www.devenirenseignant.gouv.fr'],
+        ['Corriger + relever erreurs récurrentes.',''],
+        ['Fiche récap : formules & pièges.',''],
+      ]},
+      { w:'S14', title:'Sujet complet – Écrit 2 (dossier)', items:[
+        ['Faire un sujet complet en 4h (conditions réelles).','https://www.devenirenseignant.gouv.fr'],
+        ['Corriger + comparer rapport de jury.','https://www.devenirenseignant.gouv.fr'],
+        ['Améliorer schémas et rédaction (clarté/rigueur).',''],
+      ]},
+      { w:'S15', title:'Protections & mises à la terre', items:[
+        ['Sélectivité, DDR, courbes disjoncteurs.',''],
+        ['Mise à la terre : calculs & mesures.',''],
+        ['Exercices ciblés + corrigés.',''],
+      ]},
+      { w:'S16', title:'Examen blanc complet', items:[
+        ['Écrit 1 (4h) + Écrit 2 (4h) – enchaînés.',''],
+        ['Analyse des résultats & plan de rattrapage.',''],
+        ['Check logistique (convocations, trajet, matériel).',''],
+      ]},
+
+      // Mois 5
+      { w:'S17', title:'Prépa oral – Séquence 1 (MELEC)', items:[
+        ['Construire séquence complète (fiche prof/élève).','https://eduscol.education.fr/sti/'],
+        ['Préparer supports (diapo, schéma, protocole).',''],
+        ['Simulation 10 min + questions.',''],
+      ]},
+      { w:'S18', title:'Prépa oral – Séquence 2 (Démarrage moteur)', items:[
+        ['Séquence pratique + évaluation critériée.',''],
+        ['Argumentaire didactique (choix, différenciation).',''],
+        ['Simulation 10 min + questions.',''],
+      ]},
+      { w:'S19', title:'Prépa oral – Séquence 3 (Sécurité & consignation)', items:[
+        ['Séquence sécurité / habilitations – mise en situation.',''],
+        ['Inclusion, PAI, besoins particuliers (LP).',''],
+        ['Simulation 10 min + questions.',''],
+      ]},
+      { w:'S20', title:'Oral 2 – Système éducatif & posture', items:[
+        ['Réviser missions de l’École & LP.','https://www.education.gouv.fr'],
+        ['Valeurs de la République, climat scolaire.','https://www.education.gouv.fr'],
+        ['Oral blanc 1 (parcours, motivation, éthique).',''],
+      ]},
+
+      // Mois 6
+      { w:'S21', title:'Consolidation technique ciblée', items:[
+        ['Revoir faiblesses (machines, protections, mesures).',''],
+        ['Refaire exercices difficiles.',''],
+        ['Fiches ultra-synthèse (une page / thème).',''],
+      ]},
+      { w:'S22', title:'Portfolio & oral blanc 2', items:[
+        ['Assembler portfolio (3 séquences + annexes).',''],
+        ['Oral blanc 2 enregistré (vidéo).',''],
+        ['Feedback pair / tuteur.',''],
+      ]},
+      { w:'S23', title:'Réglages finaux & logistique', items:[
+        ['Vérifier documents, impressions, USB.',''],
+        ['Planifier trajet / timing jour J.',''],
+        ['Sommeil, respiration, gestion du stress.',''],
+      ]},
+      { w:'S24', title:'Semaine concours', items:[
+        ['Révisions légères (formules / plans).',''],
+        ['Visualisation & routine de départ.',''],
+        ['Matériel prêt + plan B.',''],
+      ]},
+    ];
+
+    // ---- Render ----
+    const weeksRoot = document.getElementById('weeks');
+
+    function esc(s){ return s.replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+    function render(){
+      weeksRoot.innerHTML = '';
+      plan.forEach((wk, wi) => {
+        const card = document.createElement('section');
+        card.className = 'card';
+        card.dataset.week = wk.w;
+        card.innerHTML = `
+          <h3>${esc(wk.w)} · ${esc(wk.title)}</h3>
+          <div class="meta">Objectif clé : <span class="badge">Prépa CAPLP – Semaine ${esc(wk.w.replace('S',''))}</span></div>
+          <div class="section">Tâches</div>
+          <ul class="tasks" id="tasks_${wi}"></ul>
+        `;
+        weeksRoot.appendChild(card);
+
+        const ul = card.querySelector('ul');
+        wk.items.forEach((it, ii) => {
+          const [label, href] = it;
+          const id = `${STORAGE_PREFIX}${wk.w}_${ii}`;
+          const li = document.createElement('li');
+          li.className = 'task';
+          const url = href && href.trim().length ? `<small><a href="${href}" target="_blank" rel="noopener">Lien</a></small>` : '';
+          li.innerHTML = `
+            <input type="checkbox" id="${id}" aria-label="${esc(label)}" />
+            <label for="${id}">
+              ${esc(label)}
+              ${url}
+            </label>
+          `;
+          ul.appendChild(li);
+        });
+      });
+    }
+
+    render();
+
+    // ---- Persistence ----
+    function allCheckboxes(){ return Array.from(document.querySelectorAll('input[type="checkbox"]')); }
+
+    function load(){
+      allCheckboxes().forEach(cb => {
+        const saved = localStorage.getItem(cb.id);
+        cb.checked = saved === '1';
+      });
+      updateProgress();
+    }
+
+    function saveOne(id, checked){
+      try {
+        if(checked) localStorage.setItem(id, '1');
+        else localStorage.removeItem(id);
+      } catch(e) {
+        console.warn('Storage error', e);
+        document.getElementById('statusBadge').textContent = 'Stockage indisponible';
+      }
+      updateProgress();
+    }
+
+    function updateProgress(){
+      const boxes = allCheckboxes();
+      const done = boxes.filter(b => b.checked).length;
+      const total = boxes.length;
+      const pct = total ? Math.round((done/total)*100) : 0;
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('progressText').textContent = `${done} / ${total} (${pct}%)`;
+    }
+
+    document.addEventListener('change', (e) => {
+      const t = e.target;
+      if(t && t.matches('input[type="checkbox"]')){
+        saveOne(t.id, t.checked);
+      }
+    });
+
+    // Load states after initial render
+    window.addEventListener('DOMContentLoaded', load);
+
+    // ---- Controls ----
+    document.getElementById('resetChecks').addEventListener('click', () => {
+      if(confirm('Supprimer toutes les coches enregistrées pour cette fiche ?')){
+        allCheckboxes().forEach(cb => localStorage.removeItem(cb.id));
+        load();
+      }
+    });
+
+    let collapsed = false;
+    document.getElementById('toggleCollapse').addEventListener('click', () => {
+      collapsed = !collapsed;
+      document.querySelectorAll('.card .tasks').forEach(ul => ul.style.display = collapsed ? 'none' : 'grid');
+    });
+  </script>
+</body>
+</html>
